@@ -2,7 +2,7 @@
 
 Protótipo interativo desenvolvido para a disciplina de **Gestão de Produtos & Engenharia de Produção**, apresentando uma solução operacional e tecnológica para o estudo de caso **O Lançamento do PratoCerto**.
 
-🔗 **Acesse o MVP ao vivo:** [Clique aqui para abrir o protótipo](COLOQUE_SEU_LINK_AQUI)
+🔗 **Acesse o MVP ao vivo:** (https://eduardo-coder-h.github.io/pratocerto-mvp/)
 
 ---
 
