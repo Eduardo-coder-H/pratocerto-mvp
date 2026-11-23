@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PratoCerto Ops — MVP de Recuperação Operacional</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand">
+        <span class="brand-mark">PC</span>
+        <div>
+          <strong class="brand-name">PratoCerto Ops</strong>
+          <span class="brand-sub">Central de Despacho &amp; OMS</span>
+        </div>
+      </div>
+
+      <nav class="main-nav" aria-label="Navegação principal">
+        <button class="nav-btn active" data-tab="central">Central ao Vivo</button>
+        <button class="nav-btn" data-tab="app">App &amp; Estoque</button>
+        <button class="nav-btn" data-tab="indicadores">Indicadores &amp; Estresse</button>
+        <button class="nav-btn" data-tab="pitch">Roteiro do Pitch</button>
+      </nav>
+    </div>
+
+    <div class="topbar-right">
+      <div class="scenario-group" role="group" aria-label="Cenário operacional">
+        <button class="scen-btn" data-scenario="crise">Crise</button>
+        <button class="scen-btn active" data-scenario="mvp">MVP Ativo</button>
+        <button class="scen-btn" data-scenario="estresse">Estresse +50%</button>
+      </div>
+
+      <select id="presenterSelect" class="util-select" aria-label="Apresentador ativo">
+        <option value="Eduardo Henrique">Eduardo Henrique</option>
+        <option value="Lindolfo Sampaio">Lindolfo Sampaio</option>
+        <option value="Victor Lima">Victor Lima</option>
+      </select>
+
+      <div class="font-group" role="group" aria-label="Tamanho da fonte">
+        <button class="util-btn font-btn active" data-font="1">A</button>
+        <button class="util-btn font-btn" data-font="1.08">A+</button>
+        <button class="util-btn font-btn" data-font="1.16">A++</button>
+      </div>
+
+      <button id="themeToggle" class="util-btn" title="Alternar modo escuro">Escuro</button>
+      <button id="exportCsvBtn" class="util-btn" title="Exportar indicadores em CSV">CSV</button>
+      <button id="printBtn" class="util-btn" title="Imprimir relatório">Imprimir</button>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <section class="status-strip" id="statusStrip">
+      <div class="status-strip-left">
+        <span class="pill" id="scenarioPill">MODO MVP ATIVO</span>
+        <span class="status-summary" id="statusSummary">
+          Operação estabilizada: estoque sincronizado, entrada nivelada por slotting e frota reforçada.
+        </span>
+      </div>
+      <div class="status-strip-right">
+        Apresentando: <strong id="presenterLabel">Eduardo Henrique</strong>
+      </div>
+    </section>
+
+
+    <section class="tab-panel active" id="tab-central">
+      
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h2>Fluxograma da Cadeia de Valor (Capacidade por Hora)</h2>
+            <p class="muted">Monitoramento em tempo real da camada digital à entrega física — clique em um cenário acima ou ajuste os controles à direita.</p>
+          </div>
+          <span class="badge" id="cascadeBadge">Fluxo equilibrado</span>
+        </div>
+
+        <div class="pipeline-wrap">
+          <div class="pipeline" id="pipelineStages">
+            
+          </div>
+          <aside class="sac-card" id="sacCard">
+            <div class="stage-tag">SUPORTE PARALELO</div>
+            <div class="stage-title">Atendimento (SAC)</div>
+            <div class="stage-metric" id="sacMetric">12 / 30 h</div>
+            <div class="bar-track"><div class="bar-fill" id="sacBar"></div></div>
+            <div class="stage-note" id="sacNote">Chamados sob controle</div>
+          </aside>
+        </div>
+
+        <div class="cascade-alert hidden" id="cascadeAlert"></div>
+      </div>
+
+      
+      <div class="grid-65-35">
+        <div class="col-main">
+          
+          <div class="kpi-row">
+            <div class="kpi-card">
+              <span class="kpi-label">Demanda Efetiva</span>
+              <strong class="kpi-value" id="kpiDemand">80 /h</strong>
+              <span class="kpi-sub" id="kpiDemandSub">Pico original: 190/h</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Vazão Concluída</span>
+              <strong class="kpi-value" id="kpiThroughput">80 /h</strong>
+              <span class="kpi-sub" id="kpiThroughputSub">Teto: Embalagem (80/h)</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Vendidos sem Estoque</span>
+              <strong class="kpi-value" id="kpiStockout">0</strong>
+              <span class="kpi-sub" id="kpiStockoutSub">Na crise: 260 pedidos</span>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-label">Prazo Médio Real</span>
+              <strong class="kpi-value" id="kpiEta">32 min</strong>
+              <span class="kpi-sub" id="kpiEtaSub">Meta: até 35 min</span>
+            </div>
+          </div>
+
+          
+          <div class="card">
+            <div class="card-head">
+              <h3>Integrações Essenciais (Digital ↔ Físico)</h3>
+              <span class="muted small">Diagnóstico técnico do caso</span>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Integração</th>
+                  <th>Função Operacional</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="integrationsBody">
+                
+              </tbody>
+            </table>
+          </div>
+
+          
+          <div class="card">
+            <div class="card-head">
+              <h3>Log de Eventos do OMS</h3>
+              <button class="link-btn" id="clearLogBtn">Limpar log</button>
+            </div>
+            <div class="event-log" id="eventLog"></div>
+          </div>
+        </div>
+
+        
+        <aside class="col-side">
+          <div class="card sticky-card">
+            <div class="card-head">
+              <h3>3 Ações Prioritárias do Grupo</h3>
+              <button class="link-btn" id="resetMvpBtn">Restaurar</button>
+            </div>
+
+            
+            <div class="action-box">
+              <div class="action-top">
+                <div>
+                  <span class="action-num">AÇÃO 01</span>
+                  <h4>Retirar itens sem estoque</h4>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="toggleStockSync" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <p class="muted small">Sincroniza o estoque físico da cozinha com o cardápio do app e bloqueia automaticamente itens zerados.</p>
+            </div>
+
+            
+            <div class="action-box">
+              <div class="action-top">
+                <div>
+                  <span class="action-num">AÇÃO 02</span>
+                  <h4>Limitar novos pedidos (Slotting)</h4>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="toggleSlotting" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <p class="muted small">Nivela a entrada de pedidos à capacidade real de processamento por janela horária.</p>
+              <div class="range-wrap">
+                <div class="range-head">
+                  <span>Teto de pedidos/h</span>
+                  <strong id="slotCapLabel">80 /h</strong>
+                </div>
+                <input type="range" id="slotCapRange" min="50" max="120" step="5" value="80" />
+              </div>
+            </div>
+
+            
+            <div class="action-box">
+              <div class="action-top">
+                <div>
+                  <span class="action-num">AÇÃO 03</span>
+                  <h4>Contratar entregadores temporários</h4>
+                </div>
+              </div>
+              <p class="muted small">Expande o gargalo crítico inicial (50 entregas/h). Teste subir acima de 80/h para visualizar o efeito cascata na Embalagem.</p>
+              <div class="range-wrap">
+                <div class="range-head">
+                  <span>Capacidade da frota</span>
+                  <strong id="fleetCapLabel">80 /h</strong>
+                </div>
+                <input type="range" id="fleetCapRange" min="50" max="120" step="5" value="80" />
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+      <!-- ================= ABA 2: APP & ESTOQUE ================= -->
+    <section class="tab-panel" id="tab-app">
+      <div class="grid-50-50">
+        <!-- Lado Esquerdo: Estoque Físico da Cozinha -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2>Estoque Físico da Cozinha (OMS)</h2>
+              <p class="muted">Alterações aqui refletem instantaneamente no App do Cliente ao lado.</p>
+            </div>
+            <span class="badge" id="syncStatusBadge">Sincronizado</span>
+          </div>
+
+          <div class="stock-list" id="kitchenStockList"></div>
+
+          <div class="slotting-box">
+            <div class="slotting-head">
+              <strong>Janela de Entrega (12h00 – 13h00)</strong>
+              <span id="windowUsageText">74 / 80 vagas</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill" id="windowBar"></div></div>
+            <div class="slotting-actions">
+              <button class="btn-outline" id="fillWindowBtn">Simular Janela Cheia</button>
+              <button class="btn-outline" id="resetWindowBtn">Resetar Janela</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lado Direito: Mockup do App do Cliente -->
+        <div class="card phone-panel">
+          <div class="card-head">
+            <div>
+              <h2>App do Cliente (Visão Real)</h2>
+              <p class="muted">Teste comprar o Salmão zerado com a Ação 1 ligada e depois desligada.</p>
+            </div>
+          </div>
+
+          <div class="phone-frame">
+            <div class="phone-notch">
+              <span>12:18</span>
+              <span>PratoCerto App</span>
+              <span>5G</span>
+            </div>
+
+            <div class="phone-banner" id="phoneEtaBanner">
+              Entrega estimada: <strong>32 min</strong> · Janela 12h–13h aberta
+            </div>
+
+            <div class="phone-menu" id="phoneMenuList"></div>
+
+            <div class="phone-feedback hidden" id="phoneFeedback"></div>
+
+            <!-- Stepper de Comunicação Proativa -->
+            <div class="tracker-box">
+              <div class="tracker-head">
+                <strong>Acompanhamento Automático #PC-409</strong>
+                <button class="link-btn" id="advanceOrderBtn">Avançar etapa →</button>
+              </div>
+              <div class="stepper" id="orderStepper">
+                <div class="step active"><span>1</span>Confirmado</div>
+                <div class="step"><span>2</span>Cozinha</div>
+                <div class="step"><span>3</span>Embalagem</div>
+                <div class="step"><span>4</span>Em rota</div>
+                <div class="step"><span>5</span>Entregue</div>
+              </div>
+              <p class="tracker-msg" id="trackerMsg">
+                Alerta enviado ao cliente: "Seu pedido #PC-409 foi confirmado com prazo real de 32 min."
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="tab-panel" id="tab-indicadores">
+      <div class="card stress-banner">
+        <div>
+          <span class="action-num">TESTE DE ESTRESSE (+50% DEMANDA)</span>
+          <h2>Simulação de Pico Extremo: 285 pedidos/hora</h2>
+          <p class="muted">
+            Avalia qual recurso falha primeiro quando a demanda sobe 50% acima dos 190/h do lançamento e monitora o teto absoluto do Gateway de Pagamentos (300 transações/h).
+          </p>
+        </div>
+        <button class="btn-primary" id="stressToggleBtn">Ativar Estresse +50%</button>
+      </div>
+
+      
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Monitor Crítico: Gateway de Pagamentos (Limite: 300 transações/h)</h3>
+            <p class="muted small">Sob estresse (+50%), 285 transações/h atingem 95% da capacidade absoluta com risco iminente de queda.</p>
+          </div>
+          <strong class="gateway-readout" id="gatewayReadout">80 / 300 h (27%)</strong>
+        </div>
+        <div class="bar-track bar-lg">
+          <div class="bar-fill" id="gatewayBar"></div>
+        </div>
+        <div class="gateway-note" id="gatewayNote">Margem operacional segura no gateway de pagamentos.</div>
+      </div>
+
+      
+      <div class="card">
+        <div class="card-head">
+          <h3>Indicadores de Recuperação (Crise vs. Operação Atual)</h3>
+          <span class="muted small">Baseado nos KPIs definidos pelo grupo no estudo de caso e pitch</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Indicador</th>
+              <th>Cenário de Crise</th>
+              <th>Operação Atual</th>
+              <th>Variação / Status</th>
+            </tr>
+          </thead>
+          <tbody id="kpiTableBody">
+            
+          </tbody>
+        </table>
+      </div>
+
+      
+      <div class="grid-3">
+        <div class="card">
+          <span class="action-num">COMUNICAÇÃO 01</span>
+          <h4>Prazo Real Pré-Checkout</h4>
+          <p class="muted small">Informar o tempo real de entrega antes da confirmação do pagamento, ajustado dinamicamente à fila de embalagem e frota.</p>
+        </div>
+        <div class="card">
+          <span class="action-num">COMUNICAÇÃO 02</span>
+          <h4>Cardápio Sincronizado</h4>
+          <p class="muted small">Sinalizar itens esgotados no menu em tempo real, evitando cobranças indevidas, estornos e frustração no pós-venda.</p>
+        </div>
+        <div class="card">
+          <span class="action-num">COMUNICAÇÃO 03</span>
+          <h4>Alertas Automatizados</h4>
+          <p class="muted small">Disparar atualizações proativas a cada mudança de etapa (Cozinha → Embalagem → Rota), reduzindo a sobrecarga no SAC (30/h).</p>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="tab-panel" id="tab-pitch">
+      <div class="card pitch-timer-card">
+        <div>
+          <span class="action-num">APRESENTAÇÃO DO GRUPO · ATÉ 2 MINUTOS</span>
+          <h2>Cronômetro do Pitch</h2>
+          <p class="muted small">Use durante a apresentação em sala para manter a fala sincronizada dentro do tempo limite.</p>
+        </div>
+        <div class="timer-controls">
+          <div class="timer-display" id="timerDisplay">02:00</div>
+          <button class="btn-primary" id="timerStartBtn">Iniciar</button>
+          <button class="btn-outline" id="timerResetBtn">Reiniciar</button>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card pitch-card">
+          <span class="pill-soft">BLOCO 1 · LINDOLFO</span>
+          <h3>O Problema</h3>
+          <ul class="pitch-list">
+            <li><strong>760</strong> pedidos confirmados em 4h para apenas <strong>500</strong> refeições em estoque.</li>
+            <li>Pico inesperado gerado por influenciador + falha de integração entre estoque e app.</li>
+            <li>Gargalo crítico na frota de entregadores (<strong>50/h</strong>) e filas em cascata (Embalagem 80/h, Cozinha 100/h).</li>
+          </ul>
+        </div>
+
+        <div class="card pitch-card">
+          <span class="pill-soft">BLOCO 2 · EDUARDO</span>
+          <h3>Nossas Três Ações</h3>
+          <ul class="pitch-list">
+            <li><strong>1. Retirar itens sem estoque:</strong> estanca vendas indevidas e estornos imediatamente.</li>
+            <li><strong>2. Limitar novos pedidos:</strong> nivela a demanda à capacidade real via <em>slotting</em>.</li>
+            <li><strong>3. Contratar entregadores temporários:</strong> desbloqueia o gargalo mais severo (50/h).</li>
+          </ul>
+        </div>
+
+        <div class="card pitch-card">
+          <span class="pill-soft">BLOCO 3 · VICTOR</span>
+          <h3>Indicadores de Recuperação</h3>
+          <ul class="pitch-list">
+            <li>Tempo médio de entrega &amp; Entregas no prazo.</li>
+            <li>Produtos vendidos sem estoque &amp; Pagamentos não confirmados.</li>
+            <li>Fila de embalagem &amp; Volume de reclamações no SAC.</li>
+          </ul>
+        </div>
+      </div>
+
+      <blockquote class="thesis-quote">
+        <span class="action-num">PERGUNTA FINAL · TESE DO GRUPO</span>
+        <p class="thesis-q">O PratoCerto vende um aplicativo ou entrega uma refeição?</p>
+        <p class="thesis-a">
+          “Uma refeição completa, correta e dentro do prazo. O aplicativo é o canal de venda. A excelência operacional entrega valor ao cliente.”
+        </p>
+      </blockquote>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
